@@ -22,12 +22,12 @@ while true do
  		if ( tonumber(fibaro:getValue(light, 'value')) == 0 ) then
 			fibaro:call(light, "setValue", dimlevel);
  		end
-    	-- sleep
-    	for countdown = 0, duration*10, 1 do
-           fibaro:sleep(100);    	
-    	end
- 	    on_by_pir_event=0
-        fibaro:call(light, "turnOff");
+    		-- sleep
+    		for countdown = 0, duration*10, 1 do
+       			fibaro:sleep(100);    	
+    		end
+ 		on_by_pir_event=0
+        	fibaro:call(light, "turnOff");
 	end
 
 	fibaro:sleep(100);
