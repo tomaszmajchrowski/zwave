@@ -18,8 +18,14 @@ while true do
       		fibaro:debug("Turn on block")
 			fibaro:call(light, "setValue", dimlevel);
 		else
-      		fibaro:debug("Turn off block")
-			fibaro:call(light, "turnOff");
+      		-- in some rear case msgs are lost. loop till 
+      		-- really disabled
+      		while ( current_state>0 ) do
+      			fibaro:debug("Turn off block");
+				fibaro:call(light, "turnOff");
+      			current_state = tonumber(fibaro:getValue(light, 'value'));
+        		fibaro:sleep(500);
+      		end
 		end
     	fibaro:sleep(500);
     	fibaro:debug("loop end")
