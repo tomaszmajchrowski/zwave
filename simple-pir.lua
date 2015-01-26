@@ -9,7 +9,7 @@ local light = 4147; -- light id: change this to the id of your light dimmer only
 local dimlevel = tonumber(fibaro:getGlobalValue('g_pir_dim_lev_pl')); -- dim-level
 --local dimlevel = 6 -- comment out line above and uncomment
 --						current in case global var missed
-local duration = 10; -- seconds to keep on the light after last detected movement
+local duration = 30; -- seconds to keep on the light after last detected movement
 local on_by_pir_event=0
 local movement;
 local countdown
@@ -25,25 +25,29 @@ while true do
 	end
 	if ( on_by_pir_event == 1 ) then
     	local current_state = tonumber(fibaro:getValue(light, 'value'));
-		if ( current_state == 0 ) then
-        	while ( current_state==0 ) do
-				fibaro:call(light, "setValue", dimlevel);
-        		current_state = tonumber(fibaro:getValue(light, 'value'));
-                fibaro:sleep(click_delay);
-        	end
-		end
-		-- sleep
+        
+    	while ( current_state==0 ) do
+			fibaro:call(light, "setValue", dimlevel);
+        	current_state = tonumber(fibaro:getValue(light, 'value'));
+            fibaro:sleep(click_delay);
+        end
+		
+    	-- sleep
 		for countdown = 0, duration*10, 1 do
 			fibaro:sleep(100);
 		end
 	
     	on_by_pir_event=0
-	
+    	-- first of all disable light to avoid click delay
+		fibaro:call(light, "turnOff");
+    	current_state = tonumber(fibaro:getValue(light, 'value'));
+    
         while ( current_state>0 ) do
+      		-- if still not disabled sleep for a while and try again..
+      		fibaro:sleep(click_delay);
       		--fibaro:debug("Turn off block");
 			fibaro:call(light, "turnOff");
       		current_state = tonumber(fibaro:getValue(light, 'value'));
-        	fibaro:sleep(click_delay);
       	end
 
 	end
